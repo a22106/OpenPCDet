@@ -1,0 +1,75 @@
+DATASET: 'CustomDataset'
+DATA_PATH: '/data/NIA50/50-2/data/NIA50/학습용데이터_pre4/Suwon'
+
+POINT_CLOUD_RANGE: [0, -75.2,  -17, 150.4, 75.2, 1]
+
+CLASS_NAMES: ["Car", "Two_Wheeler", "Adult", "Kid", "SUV", "Van"]
+
+MAP_CLASS_TO_KITTI: {
+    'Car': 'Car',
+    'Two_Wheeler': 'Two_Wheeler',
+    'Adult': 'Adult',
+    'Kid': 'Kid',
+    'SUV': 'SUV',
+    'Van': 'Van'
+}
+
+DATA_SPLIT: {
+    'train': train,
+    'test': val
+}
+
+INFO_PATH: {
+    'train': [custom_infos_train.pkl],
+    'test': [custom_infos_val.pkl],
+}
+
+POINT_FEATURE_ENCODING: {
+    encoding_type: absolute_coordinates_encoding,
+    used_feature_list: ['x', 'y', 'z', 'intensity'],
+    src_feature_list: ['x', 'y', 'z', 'intensity'],
+}
+
+DATA_AUGMENTOR:
+    DISABLE_AUG_LIST: ['placeholder']
+    AUG_CONFIG_LIST:
+        - NAME: gt_sampling
+          USE_ROAD_PLANE: False
+          DB_INFO_PATH:
+              - custom_dbinfos_train.pkl
+          PREPARE: {
+             filter_by_min_points: ['Car:5', 'Two_Wheeler:5', 'Adult:5', 'Kid:5', 'SUV:5', 'Van:5'],
+          }
+
+          SAMPLE_GROUPS: ['Car:20', 'Two_Wheeler:15', 'Adult:15', 'Kid:15', 'SUV:15', 'Van:15']
+          NUM_POINT_FEATURES: 4
+          DATABASE_WITH_FAKELIDAR: False
+          REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
+          LIMIT_WHOLE_SCENE: True
+
+        - NAME: random_world_flip
+          ALONG_AXIS_LIST: ['x', 'y']
+
+        - NAME: random_world_rotation
+          WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
+
+        - NAME: random_world_scaling
+          WORLD_SCALE_RANGE: [0.95, 1.05]
+
+DATA_PROCESSOR:
+    - NAME: mask_points_and_boxes_outside_range
+      REMOVE_OUTSIDE_BOXES: True
+
+    - NAME: shuffle_points
+      SHUFFLE_ENABLED: {
+        'train': True,
+        'test': False
+      }
+
+    - NAME: transform_points_to_voxels
+      VOXEL_SIZE: [0.1, 0.1, 0.45]
+      MAX_POINTS_PER_VOXEL: 5
+      MAX_NUMBER_OF_VOXELS: {
+        'train': 150000,
+        'test': 150000
+      }
