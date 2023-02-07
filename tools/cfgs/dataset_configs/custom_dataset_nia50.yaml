@@ -1,27 +1,40 @@
 DATASET: 'CustomDataset'
 DATA_PATH: '/data/NIA50/50-2/data/NIA50/학습용데이터_pre4/Suwon'
 
-POINT_CLOUD_RANGE: [0, -75.2,  -17, 150.4, 75.2, 1]
+# POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4] # origin
+POINT_CLOUD_RANGE: [-75.2, -75.2,  -15, 75.2, 0, -3]
 
-CLASS_NAMES: ["Car", "Two_Wheeler", "Adult", "Kid", "SUV", "Van"]
+CLASS_NAMES: ['Small_Car', 'Light_Car', 'Car', 'Van', 'SUV', 'Small_Truck', 'Medium_Truck', 'Large_Truck', 'Mini_Bus', 'Bus', 'Special_Vehicle',
+              'Two_Wheeler', 'Kickboard', 'Adult', 'Kid']
 
 MAP_CLASS_TO_KITTI: {
-    'Car': 'Car',
-    'Two_Wheeler': 'Two_Wheeler',
-    'Adult': 'Adult',
-    'Kid': 'Kid',
-    'SUV': 'SUV',
-    'Van': 'Van'
-}
+  'Small_Car': 'Small_Car',
+  'Light_Car': 'Light_Car',
+  'Car': 'Car',
+  'Van': 'Van',
+  'SUV': 'SUV',
+  'Small_Truck': 'Small_Truck',
+  'Medium_Truck': 'Medium_Truck',
+  'Large_Truck': 'Large_Truck',
+  'Mini_Bus': 'Mini_Bus',
+  'Bus': 'Bus',
+  'Special_Vehicle': 'Special_Vehicle',
+  'Two_Wheeler': 'Two_Wheeler',
+  'Kickboard': 'Kickboard',
+  'Adult': 'Adult',
+  'Kid': 'Kid'
+  }
 
 DATA_SPLIT: {
     'train': train,
-    'test': val
+    'val': val,
+    'test': test
 }
 
 INFO_PATH: {
     'train': [custom_infos_train.pkl],
-    'test': [custom_infos_val.pkl],
+    'val': [custom_infos_val.pkl],
+    'test': [custom_infos_test.pkl],
 }
 
 POINT_FEATURE_ENCODING: {
@@ -37,11 +50,13 @@ DATA_AUGMENTOR:
           USE_ROAD_PLANE: False
           DB_INFO_PATH:
               - custom_dbinfos_train.pkl
-          PREPARE: {
-             filter_by_min_points: ['Car:5', 'Two_Wheeler:5', 'Adult:5', 'Kid:5', 'SUV:5', 'Van:5'],
+          PREPARE: { 
+            filter_by_min_points: ['Car:5', 'Small_Car:5', 'Light_Car:5', 'SUV:5', 'Van:5', 'Small_Truck:5', 'Medium_Truck:5', 
+                                  'Large_Truck:5', 'Bus:5', 'Mini_Bus:5', 'Special_Vehicle:5','Two_Wheeler:5', 'Kickboard:5', 'Adult:5', 'Kid:5']
           }
 
-          SAMPLE_GROUPS: ['Car:20', 'Two_Wheeler:15', 'Adult:15', 'Kid:15', 'SUV:15', 'Van:15']
+          SAMPLE_GROUPS: ['Car:20', 'Small_Car:15', 'Light_Car:15', 'SUV:15', 'Van:15', 'Small_Truck:15', 'Medium_Truck:15', 
+                          'Large_Truck:15', 'Bus:15', 'Mini_Bus:15', 'Special_Vehicle:15','Two_Wheeler:15', 'Kickboard:15', 'Adult:15', 'Kid:15']
           NUM_POINT_FEATURES: 4
           DATABASE_WITH_FAKELIDAR: False
           REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
@@ -63,13 +78,16 @@ DATA_PROCESSOR:
     - NAME: shuffle_points
       SHUFFLE_ENABLED: {
         'train': True,
+        'val': False,
         'test': False
       }
 
     - NAME: transform_points_to_voxels
-      VOXEL_SIZE: [0.1, 0.1, 0.45]
+      # VOXEL_SIZE: [0.1, 0.1, 0.15] # origin
+      VOXEL_SIZE: [0.1, 0.05, 0.3]
       MAX_POINTS_PER_VOXEL: 5
       MAX_NUMBER_OF_VOXELS: {
         'train': 150000,
+        'val': 150000,
         'test': 150000
       }

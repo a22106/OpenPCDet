@@ -1,7 +1,7 @@
-CLASS_NAMES: ["Car", "Two_Wheeler", "Adult", "Kid", "SUV", "Van"]
+CLASS_NAMES: ['Car', 'Small_Car', 'Light_Car', 'SUV', 'Van', 'Small_Truck', 'Medium_Truck', 'Large_Truck', 'Bus', 'Mini_Bus', 'Special_Vehicle','Two_Wheeler', 'Kickboard', 'Adult', 'Kid']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: /data/NIA50/50-2/models/OpenPCD/tools/cfgs/dataset_configs/custom_dataset_nia50_n.yaml
+    _BASE_CONFIG_: ../dataset_configs/custom_dataset_nia50.yaml
 
 MODEL:
     NAME: PVRCNN
